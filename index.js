@@ -14,6 +14,7 @@ const keyLastUpdate = "dou_ban_last_update"
 const keyDouBanCookie = "dou_ban_cookie"
 const keyDouBanUser = "dou_ban_user"
 const keyDouBanSync = "dou_ban_sync"
+const keyDouBanSyncNow = "dou_ban_sync_now"
 
 // 获取豆瓣记录
 router.registerRouter("GET","/:type",function(context){
@@ -244,7 +245,8 @@ function Spider(){
 widget.addSetting("豆瓣设置",1,[
     {title:"豆瓣用户ID",type: "input",key: keyDouBanUser,default:""},
     {title:"豆瓣cookie",type: "text",key: keyDouBanCookie,default:""},
-    {title:"每日定时同步",type: "switch",key: keyDouBanSync,default: true}
+    {title:"每日定时同步",type: "switch",key: keyDouBanSync,default: true},
+    {title:"立即同步",type: "row",key: keyDouBanSyncNow,default: "admin/plugins/dou_ban"}
 ])
 
 // 注册定时任务爬数据
@@ -272,3 +274,7 @@ router.registerRouter("GET","/spider",function(context){
     // })
 })
 
+// 豆瓣爬虫
+router.registerAdminRouter("GET","",function (context){
+    router.response.ResponseOk(context,"爬虫成功")
+})
