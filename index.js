@@ -13,6 +13,7 @@ const keyBackground = "dou_ban_img"
 const keyLastUpdate = "dou_ban_last_update"
 const keyDouBanCookie = "dou_ban_cookie"
 const keyDouBanUser = "dou_ban_user"
+const keyDouBanSync = "dou_ban_sync"
 
 // 获取豆瓣记录
 router.registerRouter("GET","/:type",function(context){
@@ -68,7 +69,6 @@ widget.addPage({
 },function (){
     let db = database.newDb(dbDouBan)
     //获取一言
-    // setting.Talk = tools.HttpGet("https://v1.hitokoto.cn?c=a&c=b&c=c&c=d&c=e&c=f&c=g&c=h&c=i&c=j&c=k&c=l&encode=text")
     let talk = ""
     net.get("https://v1.hitokoto.cn?c=a&c=b&c=c&c=d&c=e&c=f&c=g&c=h&c=i&c=j&c=k&c=l&encode=text",{},function (err,res){
         if (err==null){ talk = res }
@@ -218,7 +218,6 @@ function getMusic(db,cookie,user,type){
     colly.Visit("http://music.douban.com/people/"+user+"/"+type)
 }
 
-
 // 爬虫爬取数据
 function Spider(){
     // 更新一下时间
@@ -239,6 +238,14 @@ function Spider(){
     getMusic(db,cookie,user,"do")
     getMusic(db,cookie,user,"wish")
 }
+
+// 设置界面
+// 注册追番设置
+widget.addSetting("豆瓣设置",1,[
+    {title:"豆瓣用户ID",type: "input",key: keyDouBanUser,default:""},
+    {title:"豆瓣cookie",type: "text",key: keyDouBanCookie,default:""},
+    {title:"每日定时同步",type: "switch",key: keyDouBanSync,default: true}
+])
 
 // 注册定时任务爬数据
 router.registerRouter("GET","/spider",function(context){
@@ -264,3 +271,4 @@ router.registerRouter("GET","/spider",function(context){
     //     }
     // })
 })
+
