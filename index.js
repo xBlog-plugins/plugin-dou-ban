@@ -5,6 +5,7 @@ const tools =xBlog.tools
 const widget = xBlog.widget
 const net = xBlog.net
 const spider = xBlog.spider
+const cron = xBlog.cron
 
 // 一些字段
 const dbDouBan = "dou_ban"
@@ -245,36 +246,19 @@ function Spider(){
 widget.addSetting("豆瓣设置",1,[
     {title:"豆瓣用户ID",type: "input",key: keyDouBanUser,default:""},
     {title:"豆瓣cookie",type: "text",key: keyDouBanCookie,default:""},
-    {title:"每日定时同步",type: "switch",key: keyDouBanSync,default: true},
-    {title:"立即同步",type: "row",key: keyDouBanSyncNow,default: "admin/plugins/dou_ban"}
+    {title:"每日定时同步",type: "switch",key: keyDouBanSync,default: false},
+    {title:"立即同步(耗时操作，请勿重复点击！)",type: "row",key: keyDouBanSyncNow,default: "admin/plugins/dou_ban"}
 ])
-
-// 注册定时任务爬数据
-router.registerRouter("GET","/spider",function(context){
-    Spider()
-    router.response.ResponseOk(context,{message:"爬取数据中"})
-    // db.Paginate({ "filter" : { "item_type": type } },id,20,function (err,page,total,data){
-    //     if (err==null){
-    //         response.total = page
-    //         data.forEach(function (item){
-    //             response.contents.push({
-    //                 name: item.name,
-    //                 picture: item.image,
-    //                 star: item.score,
-    //                 pub: item.pub_info,
-    //                 comment: item.comment,
-    //                 status: item.status,
-    //                 url: item.url
-    //             })
-    //         })
-    //         router.response.ResponseOk(context,response)
-    //     } else {
-    //         router.response.ResponseServerError(context,"查询数据失败")
-    //     }
-    // })
-})
 
 // 豆瓣爬虫
 router.registerAdminRouter("GET","",function (context){
-    router.response.ResponseOk(context,"爬虫成功")
+    Spider()
+    router.response.ResponseOk(context,{})
+})
+
+// 注册定时任务
+cron.start("0 0 0 1/1 * ?",function () {
+    if (tools.getSetting(keyDouBanSync)){
+        spider()
+    }
 })
